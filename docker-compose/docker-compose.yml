@@ -1,0 +1,27 @@
+version: "3"
+services:
+  web:
+    image: spring-boot-template-project:1.0
+    container_name: spring-boot-template-project
+    hostname: spring-boot-template-project
+    ports:
+      - 8809:8809
+    restart: unless-stopped
+    depends_on: 
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/myapp?createDatabaseIfNotExist=true
+      SPRING_PROFILES_ACTIVE: dev
+#    links:
+#      - database:database # 数据库连接信息
+  database:
+    image: mysql:5.7
+    container_name: mysql5
+    hostname: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/datadir:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    restart: unless-stopped

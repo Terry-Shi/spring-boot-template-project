@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/myapp?useSSL=true&verifyServerCertificate=false&createDatabaseIfNotExist=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: ${SHOW_SQL:false}
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+#      type: trace
+
+security:
+  allowAll: ${ALLOW_ALL:false} # 是否enable AuthPreFilter
+  cache-enabled: ${CACHE_ENABLED:true}
+  token-expire-time: ${TOKEN_EXPIRE_MINUTES:60}
+enn:
+  security:
+    enable: true
+    receive: GATEWAY
+    white-list-type: normal
+    white-list: "/api/v1/swagger.json:GET|POST,/api/v1/health:GET|POST,/api/v1/client/login:POST,/api/v1/client/refreshtoken:POST"
+
+logging:
+  level:
+    root: INFO
+    gateway: INFO
+#    org:
+#      hibernate:
+#        type: TRACE  # 显示SQL Query取出的每个字段的数据类型
+#        SQL: DEBUG  # 显示SQL
+  #file: /var/log/myapp.log

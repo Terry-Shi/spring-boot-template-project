@@ -1,0 +1,99 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.20.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        //classpath("se.transmode.gradle:gradle-docker:1.2")
+        //classpath("com.github.jnr:jnr-ffi:2.1.1") // required by docker gradle plugin
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+//apply plugin: 'docker'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+
+jar {
+    baseName = 'gateway-kunming'
+    version = '1.0.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        // The Dalston and Edgware release trains build on Spring Boot 1.5.x, and are not expected to work with Spring Boot 2.0.x.
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR5"
+    }
+}
+
+// 为测试覆盖率设定目标
+ext {
+    limits = [
+            'instruction': 95,
+            'branch'     : 90,
+            'line'       : 90,
+            'complexity' : 90,
+            'method'     : 95,
+            'class'      : 95
+    ]
+}
+// 统计测试覆盖率
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate and check jacoco coverage reports after running tests."
+
+    reports {
+        xml.enabled false
+        html.enabled true
+        csv.enabled false
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['**/Application**'])
+        })
+    }
+    // 统计覆盖率并且检查是否达到要求
+    //doLast {
+    //    new TestCoverage(jacoco).check(limits)
+    //}
+}
+check.dependsOn jacocoTestReport
+
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+
+    //compile 'com.google.code.gson:gson:2.8.5'
+    //compile 'com.google.guava:guava:27.1-jre'
+
+    runtime 'mysql:mysql-connector-java:5.1.46'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    
+    // 本地调试时，改变代码后自动热部署
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+     // springboot 集成 jersey 、swagger 实现 JAX-RS Restful 開始 
+    compile 'io.swagger:swagger-jersey2-jaxrs:1.5.21'
+    compile 'org.webjars:swagger-ui:3.20.1'
+    // springboot 集成 jersey 、swagger 实现 JAX-RS Restful 结束
+}
