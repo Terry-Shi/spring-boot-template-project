@@ -1,0 +1,240 @@
+# 测试工具使用"REST Client" plugin for Visual Studio Code
+
+# 用户的CRUD
+### 增加一个用户
+POST http://localhost:8809/api/v1/users/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+{
+    "userId": "",
+    "userName": "",
+    "password": ""
+}
+
+### update一个用户
+PUT http://localhost:8809/api/v1/users/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+{
+    "userId": "user001",
+    "userName": "用户001-new name",
+    "password": "psw001-new",
+    "createTime": "2018-11-28 09:25:42"
+}
+
+### 删除一个用户
+DELETE http://localhost:8809/api/v1/users/user004
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+### 列出所有用户
+GET http://localhost:8809/api/v1/users/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+#返回值例子
+[{
+  "userId": "admin",
+  "userName": "默认管理员",
+  "password": "83cfb7f0dda5f0efc09d0d90bf80c025",
+  "createTime": "2018-11-27 09:33:13"
+}, {
+  "userId": "user001",
+  "userName": "用户001-new name",
+  "password": "8df102cf3de8bbbe489b6752417d0b6d",
+  "createTime": "2018-11-28 09:25:42"
+}]
+### 列出所有用户和SYS的role
+GET http://localhost:8809/api/v1/users/list-with-sysroles
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+#返回值例子
+[{
+  "userId": "admin",
+  "userName": "默认管理员",
+  "password": "83cfb7f0dda5f0efc09d0d90bf80c025",
+  "createTime": "2018-11-27 09:33:13",
+  "sysRoles": "SYS_ADMIN,GUEST"
+}, {
+  "userId": "user001",
+  "userName": "用户001-new name",
+  "password": "8df102cf3de8bbbe489b6752417d0b6d",
+  "createTime": "2018-11-28 09:25:42",
+  "sysRoles": ""
+}]
+
+### 用户login，返回token
+POST http://localhost:8809/api/v1/users/login
+content-type: application/json
+
+{
+    "userId": "admin",
+    "password": "admin_kunming"
+}
+
+#返回值例子
+{
+  "message": "You have logged in successfully",
+  "token": "eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE1NDMzMTY5NTJ9.CZ6v2BaDBqiAn3Egiv9KAJgkwqmJuSr-iDAJqaKKlnzne6uUk7s9VqKc_C0DoVBPhlodYwMTsClS92-qqwUofI08UWw8pZnjSNqH7Ee2LNWuqviptJ6iztBvMxrmTiMacu8Q_60SzKAU9m3lPzsd3AqJwJF5qzRMNPL7ZFSoynC7Ywxz8-OsjsdH9E5GXJMfkOM6HI173p5Qg4zwlkymcO20o0YokXty7qEKvW-xPrSLOD92dLOytejf-GNMHOoGWDyRtUuMDtf93p5YwANHIlw9iL2SA0xixJVRo4KaNZGGoLq9YAW5SdT8kOVt6HDV-ixQtso7fvn48Qo_pBe7Rw",
+  "refreshToken": "eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE1NDMzMjA1NTN9.MFphkSL_HLYjYqiQooUDJ5mPqRBl_TWxsZxt8BiccUNR6dRLqZpUQGw91ZAjImIenzR4VVEZg7PRuk1Z-Vtkpi5JCFweWz0V38rG4pc2KOsKG9wRMZaRSJZgAupT3LIIQKVHpHEJH9kY6j-HumKY-e5-YiXh5us6p5EiD64si3PMhnR5qPC_IlpCiz4LESqy4DHuV7JxRQ6UuuCKiZIGjiu1Tf2FePrj3k1WMa5Am3_a2lo5nBGpfRIMJgfn8Kz3dVzNYgas5zu4My6AL_ax-sfOJWKwZ_6k9i0mELeF8x3yw35BzsZfSMWeRgVLB2zSzyYTzqX_1BAsObG0TREOxg",
+  "userId": "admin",
+  "sysRoles": "SYS_ADMIN,GUEST",
+  "status": 200
+}
+
+
+----------------------------------------------------------
+# GatewayPolicy CRUD 
+
+### 查询访问URL需要的权限
+GET http://localhost:8809/api/v1/gatewaypolicy/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+### 增加一条权限规则 （某URL需要什么role才能访问）
+POST http://localhost:8809/api/v1/gatewaypolicy/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+{
+    "serviceName": "svc1",
+    "httpMethod": "GET",
+    "url": "/gw/svc1/**",
+    "role": "DEVELOPER"
+}
+
+#输出例子
+{
+  "message": "Gateway Policy created",
+  "status": 200
+}
+
+
+----------------------------------------------------------
+UserRoles CRUD
+### 列出所有用户的role信息
+GET http://localhost:8809/api/v1/userroles/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+
+### 增加某用户的权限
+POST http://localhost:8809/api/v1/userroles/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+{
+    "userId": "user001",
+    "serviceName": "SYS",
+    "role": "DEVELOPER"
+}
+
+# 输出例子
+{
+  "message": "User's Role created",
+  "status": 200
+}
+
+### 删除某用户所有的权限
+DELETE http://localhost:8809/api/v1/userroles/user001
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+# 输出例子
+{
+  "message": "user's role deleted",
+  "status": 200
+}
+
+### 删除某用户在某服务的权限
+DELETE http://localhost:8809/api/v1/userroles/user_test/SYS
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+# 输出例子
+{
+  "message": "user's role deleted",
+  "status": 200
+}
+
+----------------------------------------------------------
+ServiceRoute CRUD 
+### 查询所有的服务路由映射信息
+GET http://localhost:8809/api/v1/serviceroute/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+
+### 增加一条路由映射信息
+POST http://localhost:8809/api/v1/serviceroute/add
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+
+{
+    "path": "/gw/svc1/**",
+    "serviceName": "svc1",
+    "url": "http://httpbin.org",
+    "stripPrefix": true,
+    "retryable": true,
+    "enabled": true
+}
+
+# 输出例子
+{
+  "message": "Service Route created",
+  "status": 200
+}
+
+----------------------------------------------------------
+### Restful的请求转发：
+GET http://localhost:8809/gw/httpbin/ip
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+### Restful的请求转发(user003)：
+GET http://localhost:8809/gw/httpbin/ip
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJjbGllbnQwMDMiLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxODU4MTQxNTY3fQ.UaVQCGQWkU2Xv39WZEYgjLpNJN2YoyEP16dRyUR_DBIbZUdjbA4kyur7MPSr3D6gnc4fd6hJa5tUZ_Ct4NiGowZ1eBxBtP-2ppNdkGhU37QC3oy9oQQHoBb0gZjauV4Rbs9jNWpBnixcQ6W7o7mg7RKjMB218HH2wXeaW992WGrhoh1H87iT_U-v8tNlA-QozWGziHSMze2dmoTwtALQu_aKctOJ3HOwvFKkwDJLT6yHFKuB-Lt78cdiq6TaCJId2I8vCRhZY8Ib-P9h7tSmWzxGR2nRLqVJkhANgj83HTh6hdtkNQdaNfhTJn7crpNsoTwakBXyPqzSy1Q9S1c37g
+
+### 用过期token请求
+GET http://localhost:8809/gw/httpbin/ip
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJjbGllbnQwMDEiLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTIyNzc2NjMzfQ.CF_TC6kmv1BeLbWM_oPMweCbZi3wdLveKCS42UzZxa6PDkP1j4htwF-7exIuzylLetPCUZG7Ri1tZQ8QcuwZBW8WbpHPnEdzmP6yGcrW9ykd9LrdX1HbWx7iZ82-I9xHxzA1pzEVcj_3gJzinPTohwCKtusDnWBz4zvAderoIl0XaXJ4ynKNTTqAkhMnl1GGEGWbbpy3c-nLRnw5GxFmYdMSozy8691BOjkcYGMykyXa0RwzDIhHq5VfMpM0xQW_BvomGJYrIqz3zceU37Cxk1Yxfvk3GY_AamZ10oDUZQ0lkjMgEYbtInAlReHCpCXMgbQlGWPmHS3Z8b9JW_Gzrw
+
+
+----------------------------------------------------------
+### 查询role的列表
+GET http://localhost:8809/api/v1/roles/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+# 输出例子
+[{
+  "roleId": "GUEST",
+  "roleDisplayName": "访客",
+  "createTime": "2018-11-28 05:43:31"
+}, {
+  "roleId": "MAINTAINER",
+  "roleDisplayName": "数据维护人员",
+  "createTime": "2018-11-28 05:43:31"
+}, {
+  "roleId": "SYS_ADMIN",
+  "roleDisplayName": "系统管理员",
+  "createTime": "2018-11-28 05:43:31"
+}]
+
+### 过期token查询role的列表
+GET http://localhost:8809/api/v1/roles/list
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJjbGllbnQwMDEiLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTIyNzc2NjMzfQ.CF_TC6kmv1BeLbWM_oPMweCbZi3wdLveKCS42UzZxa6PDkP1j4htwF-7exIuzylLetPCUZG7Ri1tZQ8QcuwZBW8WbpHPnEdzmP6yGcrW9ykd9LrdX1HbWx7iZ82-I9xHxzA1pzEVcj_3gJzinPTohwCKtusDnWBz4zvAderoIl0XaXJ4ynKNTTqAkhMnl1GGEGWbbpy3c-nLRnw5GxFmYdMSozy8691BOjkcYGMykyXa0RwzDIhHq5VfMpM0xQW_BvomGJYrIqz3zceU37Cxk1Yxfvk3GY_AamZ10oDUZQ0lkjMgEYbtInAlReHCpCXMgbQlGWPmHS3Z8b9JW_Gzrw
+
+
+------------------------盐城环境----------------------------------
+### 查询role的列表
+GET http://10.19.248.200:32111/api/v1/roles/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
+
+### 转发请求
+GET http://10.19.248.200:32111/gw/httpbin/ip
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw

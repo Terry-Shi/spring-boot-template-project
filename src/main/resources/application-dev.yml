@@ -11,23 +11,23 @@ spring:
       ddl-auto: update
 #      type: trace
 
-security:
-  allowAll: ${ALLOW_ALL:false} # 是否enable AuthPreFilter
-  cache-enabled: ${CACHE_ENABLED:true}
-  token-expire-time: ${TOKEN_EXPIRE_MINUTES:60}
-enn:
-  security:
-    enable: true
-    receive: GATEWAY
+myapp:
+  authentication:
+    enable: ${AUTH_ENABLE:true}
+    issuer: ${ISSUER:apiserver}
+    tokenExpiredSeconds: ${TOKEN_EXPIRED_SECONDS:600}
+    refreshTokenExpiredSeconds: ${REFRESH_TOKEN_EXPIRED_SECONDS:86400}
     white-list-type: normal
-    white-list: "/api/v1/swagger.json:GET|POST,/api/v1/health:GET|POST,/api/v1/client/login:POST,/api/v1/client/refreshtoken:POST"
+    white-list: "/api/v1/swagger.json:GET|POST,/api/v1/health:GET|POST,/api/v1/user/login:POST,/api/v1/user/refreshtoken:POST"
 
 logging:
   level:
     root: INFO
-    gateway: INFO
-#    org:
-#      hibernate:
+    myapp: INFO
+    org:
+      hibernate:
 #        type: TRACE  # 显示SQL Query取出的每个字段的数据类型
-#        SQL: DEBUG  # 显示SQL
+        SQL: DEBUG  # 显示SQL
   #file: /var/log/myapp.log
+  pattern:
+    console: '%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{requestId}] %logger{15} - %msg%n'  

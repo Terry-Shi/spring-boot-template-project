@@ -1,5 +1,6 @@
 package com.terry.webapp;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -8,6 +9,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import com.google.common.collect.ImmutableList;
+import com.terry.webapp.config.AppProperties;
 
 
 /**
@@ -16,8 +18,10 @@ import com.google.common.collect.ImmutableList;
 @SpringBootApplication
 public class MyApplication {
 
+//	@Autowired
+//	AppProperties appProperties;
+	
     public static void main(String[] args) {
-
         SpringApplication.run(MyApplication.class, args);
     }
     
