@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.terry.webapp.common.DetectiveContext;
 import com.terry.webapp.config.AppProperties;
+import com.terry.webapp.util.token.Token;
 
 import javax.annotation.Priority;
 import javax.servlet.Filter;
@@ -17,6 +18,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -50,14 +52,14 @@ public class AuthenticationFilter implements Filter {
         /**
          * Handle OPTION requests without bearer token
          */
-        servletRequest.
-        if (servletRequest.getMethod().equalsIgnoreCase("OPTIONS")) {
+        HttpServletRequest req = (HttpServletRequest)servletRequest;
+        if (req.getMethod().equalsIgnoreCase("OPTIONS")) {
             return;
         }
         /**
          * Handle Anonymous Access
          */
-        String uri = servletRequest.getUriInfo().getPath();
+        String uri = req.getRequestURI();
         if (this.authxManagement.checkAnomynousAccess(uri)) {
             logger.info("uri {} is allowed for anomynous access", uri);
             return;
@@ -65,7 +67,7 @@ public class AuthenticationFilter implements Filter {
         /**
          * Extract token from bearer token
          */
-        String bearerToken = requestContext.getHeaderString(AuthxConstant.AUTHORIZATION);
+        String bearerToken = req.getHeader(AuthxConstant.AUTHORIZATION);
         Token token = this.authxManagement.decodeBearerToken(bearerToken);
         TokenUtil.verifyToken(token);
         DetectiveContext.setLevel(token.getLevel());
