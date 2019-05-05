@@ -1,23 +1,29 @@
-buildscript {
-    ext {
-        springBootVersion = '1.5.20.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        //classpath("se.transmode.gradle:gradle-docker:1.2")
-        //classpath("com.github.jnr:jnr-ffi:2.1.1") // required by docker gradle plugin
-    }
-}
+// buildscript {
+//     ext {
+//         springBootVersion = '2.1.4.RELEASE'
+//     }
+//     repositories {
+//         mavenCentral()
+//     }
+//     dependencies {
+//         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+//         //classpath("se.transmode.gradle:gradle-docker:1.2")
+//         //classpath("com.github.jnr:jnr-ffi:2.1.1") // required by docker gradle plugin
+//     }
+// }
 
-apply plugin: 'java'
+plugins {
+	id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'java'
+}
+//apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 //apply plugin: 'docker'
-apply plugin: 'org.springframework.boot'
+//apply plugin: 'org.springframework.boot'
 apply plugin: 'jacoco'
+apply plugin: 'io.spring.dependency-management'
+
 
 jar {
     baseName = 'spring-boot-template-project'
@@ -31,12 +37,13 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        // The Dalston and Edgware release trains build on Spring Boot 1.5.x, and are not expected to work with Spring Boot 2.0.x.
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR5"
-    }
-}
+// dependencyManagement {
+//     imports {
+//         // The Dalston and Edgware release trains build on Spring Boot 1.5.x, and are not expected to work with Spring Boot 2.0.x.
+//         //mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR5"
+//         mavenBom "org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR1"
+//     }
+// }
 
 // 为测试覆盖率设定目标
 ext {
@@ -80,6 +87,8 @@ configurations {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.springframework.boot:spring-boot-starter-web'
 
@@ -88,7 +97,7 @@ dependencies {
 
     runtime 'mysql:mysql-connector-java:5.1.46'
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    //testCompile 'org.springframework.boot:spring-boot-starter-test'
     
     // 本地调试时，改变代码后自动热部署
     developmentOnly("org.springframework.boot:spring-boot-devtools")
