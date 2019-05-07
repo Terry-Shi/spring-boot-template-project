@@ -1,15 +1,22 @@
 package com.terry.webapp.features.auth.db;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -20,39 +27,67 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  *
  */
 @Entity
-public class User {
-    @Id
-    @NotEmpty(message = "UserId不能为空")
-    @Column(nullable = false)
-    private String userId;
-    
-    @NotEmpty(message = "UserName不能为空")
-    @Column(nullable = false)
-    private String userName;
+public class User implements UserDetails {
 
-    @NotEmpty(message = "Password不能为空")
+	private static final long serialVersionUID = 4882722066708750581L;
+
+//	@Id
+//    @GeneratedValue
+//    private String userId;
+	
+	@Id
+    @NotEmpty(message = "用户名不能为空")
+    @Column(nullable = false, unique=true)
+    private String username;
+
+    @NotEmpty(message = "密码不能为空")
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false,  columnDefinition = "Timestamp DEFAULT CURRENT_TIMESTAMP")
+    @NotEmpty(message = "显示名不能为空")
+    @Column(nullable = false)
+    private String displayname;
+
+	@Column(nullable = false,  columnDefinition = "Timestamp DEFAULT CURRENT_TIMESTAMP")
     @Generated(GenerationTime.INSERT)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
     
-    public String getUserId() {
-        return userId;
+//	private String roles;
+//	
+//    public String getRoles() {
+//		return roles;
+//	}
+//
+//	public void setRoles(String roles) {
+//		this.roles = roles;
+//	}
+
+	// 不是表字段
+	private List<String> roleList;
+    
+    public List<String> getRoleList() {
+		return roleList;
+	}
+
+	public void setRoleList(List<String> roleList) {
+		this.roleList = roleList;
+	}
+
+//	public String getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -70,5 +105,44 @@ public class User {
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
+    
+    public String getDisplayname() {
+		return displayname;
+	}
 
+	public void setDisplayname(String displayname) {
+		this.displayname = displayname;
+	}
+
+    @ElementCollection
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+    	if (roleList != null) {
+    		for (String role : roleList) {
+                authorities.add( new SimpleGrantedAuthority( role ) );
+    		}
+    	}
+		return authorities;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

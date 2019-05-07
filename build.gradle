@@ -79,37 +79,46 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 
-configurations {
-    developmentOnly
-    runtimeClasspath {
-        extendsFrom developmentOnly
-    }
-}
+// configurations {
+//     developmentOnly
+//     runtimeClasspath {
+//         extendsFrom developmentOnly
+//     }
+// }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'io.jsonwebtoken:jjwt-api:0.10.6'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.10.6'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.10.6'
 
-    //compile 'com.google.code.gson:gson:2.8.5'
-    compile 'com.google.guava:guava:27.1-jre'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 
-    runtime 'mysql:mysql-connector-java:5.1.46'
+    //implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.guava:guava:27.1-jre'
 
-    //testCompile 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'mysql:mysql-connector-java:5.1.47'
+
     
     // 本地调试时，改变代码后自动热部署
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    //developmentOnly("org.springframework.boot:spring-boot-devtools")
     // 密码加密保存
-    compile 'org.apache.shiro:shiro-core:1.4.0'
+    //implementation 'org.apache.shiro:shiro-core:1.4.0'
     // JWT token
-    compile 'com.nimbusds:nimbus-jose-jwt:7.1'
+    //implementation 'com.nimbusds:nimbus-jose-jwt:7.1'
     // 利用StringUtils
-    compile 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.commons:commons-lang3:3.9'
 
     // springboot mvc 集成 swagger 開始 
-    compile 'io.springfox:springfox-swagger2:2.9.2'
-    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     // springboot mvc 集成 swagger 结束
+    
+    implementation 'org.apache.poi:poi-ooxml:4.1.0'
+    implementation 'org.apache.poi:poi-scratchpad:4.1.0'
 }

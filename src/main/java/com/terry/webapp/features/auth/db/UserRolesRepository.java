@@ -14,18 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface UserRolesRepository extends JpaRepository<UserRoles, Long> {
 
-    public List<UserRoles> findByUserId(String userId);
+    public List<UserRoles> findByUsername(String username);
 
     @Transactional
-    public void deleteByUserId(String userId);
-
-    public List<UserRoles> findByServiceName(String serviceName);
+    public void deleteByUsername(String username);
+   
     @Transactional
-    public void deleteByUserIdAndServiceName(String userId, String serviceName);
-    @Transactional
-    public void deleteByUserIdAndServiceNameAndRole(String userId, String serviceName, String role);
+    public void deleteByUsernameAndRole(String username, String role);
     
-    public List<UserRoles> findByUserIdAndServiceName(String userId, String serviceName);
     
 //    @Query(value = "select e.id, e.user_id, e.role, e.gateway_policy_id, d.service_name, d.http_method, d.url "
 //        + " from user_roles e "

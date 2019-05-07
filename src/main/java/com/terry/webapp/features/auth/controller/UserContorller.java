@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +35,7 @@ import com.terry.webapp.features.auth.bean.LoginRequest;
 import com.terry.webapp.features.auth.bean.LoginResponse;
 import com.terry.webapp.features.auth.bean.RefreshTokenRequest;
 import com.terry.webapp.features.auth.db.UserRolesRepository;
+import com.terry.webapp.security.JwtTokenProvider;
 import com.terry.webapp.features.auth.db.User;
 import com.terry.webapp.features.auth.db.UserRepository;
 import com.terry.webapp.features.auth.db.UserRoles;
@@ -46,11 +49,11 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api/v1/users")
 @Api(value = "UserContorller", produces = "application/json")
-public class UserEndpoint {
-    private static final Logger logger = LoggerFactory.getLogger(UserEndpoint.class);
+public class UserContorller {
+    private static final Logger logger = LoggerFactory.getLogger(UserContorller.class);
 
-    @Value("${security.token-expire-time}")
-    public long tokenExpireTime;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -67,35 +70,37 @@ public class UserEndpoint {
      * @param request
      * @return
      */
-    @PostMapping(value="login", produces = "application/json; charset=utf-8")
+    @PostMapping(value="login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Login.", notes ="user login API" , response = LoginResponse.class)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        List<User> result = userRepository.findByUserId(request.getUserId());
-        if (result.size() == 0 ) {
-        	// userId 不存在
+         User user  = userRepository.findByUserId(request.getUsername());
+        if (user == null) {
+        	// user不存在
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
             return new ResponseEntity<>(
             		loginResponse, 
             	      HttpStatus.UNAUTHORIZED);
         } else {
-            String psw = result.get(0).getPassword();
+            String psw = user.getPassword();
             // 密码匹配
             if (SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt).equals(psw)) { 
                 // token 的有效时间可以配置
-                Instant expiredTime = Instant.now().plus(tokenExpireTime, ChronoUnit.MINUTES);
-                Instant refreshTokenExpiredTime = Instant.now().plus(tokenExpireTime*2, ChronoUnit.MINUTES);
-                String token = tokenManager.generateToken(request.getUserId(), Date.from(expiredTime));
-                String refreshToken = tokenManager.generateToken(request.getUserId(), Date.from(refreshTokenExpiredTime));
-                List<UserRoles>  roleList = userRolesRepository.findByUserIdAndServiceName(request.getUserId(), "SYS");
+                Instant expiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds(), ChronoUnit.MILLIS);
+                Instant refreshTokenExpiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds()*2, ChronoUnit.MILLIS);
+                String token = tokenManager.generateToken(request.getUsername(), Date.from(expiredTime));
+                String refreshToken = tokenManager.generateToken(request.getUsername(), Date.from(refreshTokenExpiredTime));
+                List<UserRoles>  roleList = userRolesRepository.findByUsername(request.getUsername());
                 String sysRoles = "";
                 if (roleList != null && roleList.size()>0) {
-                    for (UserRoles userRoles : roleList) {
-                        sysRoles = sysRoles + "," + userRoles.getRole();
-                    }
-                    sysRoles = sysRoles.substring(1);
+//                    for (UserRoles userRoles : roleList) {
+//                        sysRoles = sysRoles + "," + userRoles.getRole();
+//                    }
+//                    sysRoles = sysRoles.substring(1);
+                    List<String> roles = roleList.stream().map(role -> role.getRole()).collect(Collectors.toList());
+                    sysRoles = String.join(",",  roles);
                 }
                 LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
-                        .refreshToken(refreshToken).userId(request.getUserId()).sysRoles(sysRoles).build();
+                        .refreshToken(refreshToken).userId(request.getUsername()).sysRoles(sysRoles).build();
                 return new ResponseEntity<>(
                 		loginResponse, 
                 	      HttpStatus.OK);
@@ -115,8 +120,7 @@ public class UserEndpoint {
      * @param request
      * @return
      */
-
-    @PostMapping(value="refreshtoken", produces = "application/json; charset=utf-8")
+    @PostMapping(value="refreshtoken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "refreshtoken.", notes ="return refreshtoken token" , response = LoginResponse.class)
     public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         // check if refresh token is valid
@@ -129,11 +133,11 @@ public class UserEndpoint {
             }
             String userId = decodedToken.getUserId();
             // token 的有效时间可以配置
-            Instant expiredTime = Instant.now().plus(tokenExpireTime, ChronoUnit.MINUTES);
-            Instant refreshTokenExpiredTime = Instant.now().plus(tokenExpireTime*2, ChronoUnit.MINUTES);
+            Instant expiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds(), ChronoUnit.MILLIS);
+            Instant refreshTokenExpiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds()*2, ChronoUnit.MILLIS);
             String token = tokenManager.generateToken(userId, Date.from(expiredTime));
             String refreshToken = tokenManager.generateToken(userId, Date.from(refreshTokenExpiredTime));
-            List<UserRoles>  roleList = userRolesRepository.findByUserIdAndServiceName(userId, "SYS");
+            List<UserRoles>  roleList = userRolesRepository.findByUsername(userId);
             String sysRoles = "";
             if (roleList != null && roleList.size()>0) {
                 for (UserRoles userRoles : roleList) {
@@ -155,12 +159,12 @@ public class UserEndpoint {
      * @param request
      * @return
      */
-    @PostMapping(value="/", produces = "application/json; charset=utf-8")
+    @PostMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "create new user.", notes ="create new user" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> add(@Valid @RequestBody User user) {
         try {
-            List<User> users = userRepository.findByUserId(user.getUserId());
-            if (users.size() == 0) {
+            User users = userRepository.findByUsername(user.getUsername());
+            if (users == null) {
             	user.setPassword(SimpleSaltHash.getMd5Hash(user.getPassword(), SimpleSaltHash.salt));
                 userRepository.save(user);
             } else {
@@ -180,16 +184,16 @@ public class UserEndpoint {
      * @param request
      * @return
      */
-    @PutMapping(value="/", produces = "application/json; charset=utf-8")
+    @PutMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "update user info.", notes ="update user info" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> update(@Valid @RequestBody User request) {
         try {
-            List<User> users = userRepository.findByUserId(request.getUserId());
-            if (users.size() == 1) {
+            User users = userRepository.findByUserId(request.getUsername());
+            if (users != null) {
                 if (!StringUtils.isBlank(request.getPassword())) {
                     request.setPassword(SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt));
                 } else {
-                    request.setPassword(users.get(0).getPassword());
+                    request.setPassword(users.getPassword());
                 }
                 userRepository.save(request);
             } else {
@@ -209,11 +213,11 @@ public class UserEndpoint {
      * @param userId
      * @return
      */
-    @DeleteMapping(value="/{userId}", produces = "application/json; charset=utf-8")
+    @DeleteMapping(value="/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "delete user info.", notes ="delete user info" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> delete(@PathVariable("userId") String userId) {
         try {
-            userRepository.delete(userId);
+            userRepository.deleteById(userId);
             BaseResponse response = new BaseResponse(200, "user deleted");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -225,7 +229,7 @@ public class UserEndpoint {
      * list all the users
      * @return
      */
-    @GetMapping(value="/list", produces = "application/json; charset=utf-8")
+    @GetMapping(value="/list", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "query user list.", notes ="query user list" , response = List.class)
     public ResponseEntity<List<User>> list() {
         try {
@@ -242,7 +246,7 @@ public class UserEndpoint {
 //     */
 //    @Path("/list-with-sysroles")
 //    @GET
-//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON_UTF8_VALUE)
 //    public List<UserWithSysRoles> listWithSysRoles() {
 //        try {
 //            List<UserWithSysRoles> ret = new ArrayList<UserWithSysRoles>();

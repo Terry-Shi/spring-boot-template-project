@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  *
- * @author terryemailbox@gmail.com
+ * @author Terry
  *
  */
 @Entity
@@ -26,10 +26,7 @@ public class UserRoles {
     protected long id;
 
     @Column(nullable = false)
-    protected String userId;
-    
-    @Column(nullable = false)
-    protected String serviceName;
+    protected String username;
 
     @Column(nullable = false)
     protected String role;
@@ -47,20 +44,12 @@ public class UserRoles {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getRole() {

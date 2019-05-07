@@ -1,8 +1,7 @@
 package com.terry.webapp.features.auth.bean;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 public class RefreshTokenRequest {
 	@NotEmpty(message = "refresh token can not be null")

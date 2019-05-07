@@ -11,6 +11,8 @@ import com.terry.webapp.common.DetectiveContext;
 import com.terry.webapp.config.AppProperties;
 import com.terry.webapp.util.token.Token;
 
+import java.io.IOException;
+
 import javax.annotation.Priority;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,14 +30,14 @@ import javax.servlet.http.HttpServletRequest;
 @Order(1)
 public class AuthenticationFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
-    @Autowired
-    private AuthxManagement authxManagement;
+//    @Autowired
+//    private AuthxManagement authxManagement;
     
     @Autowired
 	private AppProperties appProperties;
     
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         //long start = System.currentTimeMillis();
         checkAuth(servletRequest);
         filterChain.doFilter(servletRequest,servletResponse);
@@ -59,24 +61,24 @@ public class AuthenticationFilter implements Filter {
         /**
          * Handle Anonymous Access
          */
-        String uri = req.getRequestURI();
-        if (this.authxManagement.checkAnomynousAccess(uri)) {
-            logger.info("uri {} is allowed for anomynous access", uri);
-            return;
-        }
+//        String uri = req.getRequestURI();
+//        if (this.authxManagement.checkAnomynousAccess(uri)) {
+//            logger.info("uri {} is allowed for anomynous access", uri);
+//            return;
+//        }
         /**
          * Extract token from bearer token
          */
-        String bearerToken = req.getHeader(AuthxConstant.AUTHORIZATION);
-        Token token = this.authxManagement.decodeBearerToken(bearerToken);
-        TokenUtil.verifyToken(token);
-        DetectiveContext.setLevel(token.getLevel());
-        DetectiveContext.setName(token.getName());
-        DetectiveContext.setRole(token.getRole());
-        DetectiveContext.setUserId(token.getUserId());
-        DetectiveContext.setOrganization(token.getOrganization());
-        DetectiveContext.setOrganizationCode(token.getOrganizationCode());
-        DetectiveContext.setStatus(token.getStatus());
+//        String bearerToken = req.getHeader(AuthxConstant.AUTHORIZATION);
+//        Token token = this.authxManagement.decodeBearerToken(bearerToken);
+//        TokenUtil.verifyToken(token);
+//        DetectiveContext.setLevel(token.getLevel());
+//        DetectiveContext.setName(token.getName());
+//        DetectiveContext.setRole(token.getRole());
+//        DetectiveContext.setUserId(token.getUserId());
+//        DetectiveContext.setOrganization(token.getOrganization());
+//        DetectiveContext.setOrganizationCode(token.getOrganizationCode());
+//        DetectiveContext.setStatus(token.getStatus());
     }
 
 	@Override

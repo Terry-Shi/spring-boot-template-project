@@ -1,7 +1,5 @@
 package com.terry.webapp.features.auth.db;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UserRepository extends JpaRepository<User, String> {
 
-    List<User> findByUserId(String userId);
+    User findByUserId(String userId);
     
-    List<User> findByUserName(String userName);
-
+    User findByUsername(String username);
+    
 }

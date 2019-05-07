@@ -1,26 +1,25 @@
 package com.terry.webapp.features.auth.bean;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Terry
  */
 public class LoginRequest {
 
-    @NotEmpty(message = "UserId can not be null")
-    private String userId;
+	@NotEmpty(message = "用户名不能为空")
+    private String username;
 
-    @NotEmpty(message = "password can not be null")
+	@NotEmpty(message = "密码不能为空")
     private String password;
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
