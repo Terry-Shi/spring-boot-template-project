@@ -1,0 +1,7 @@
+[
+  "/gw/be/swagger.json:GET:ANONYMOUS",
+  "/gw/be/health:GET:ANONYMOUS",
+  "/gw/be/health/deep:GET:ANONYMOUS",
+
+  "/gw/be/**:*:SYS_ADMIN,ADMIN"
+]

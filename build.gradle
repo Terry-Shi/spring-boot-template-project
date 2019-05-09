@@ -30,8 +30,8 @@ jar {
     version = '1.0.0'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
@@ -39,8 +39,6 @@ repositories {
 
 // dependencyManagement {
 //     imports {
-//         // The Dalston and Edgware release trains build on Spring Boot 1.5.x, and are not expected to work with Spring Boot 2.0.x.
-//         //mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR5"
 //         mavenBom "org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR1"
 //     }
 // }
@@ -89,7 +87,7 @@ check.dependsOn jacocoTestReport
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.jsonwebtoken:jjwt-api:0.10.6'
@@ -97,28 +95,30 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.10.6'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	// testImplementation 'org.springframework.security:spring-security-test'
 
     //implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.guava:guava:27.1-jre'
 
     runtimeOnly 'mysql:mysql-connector-java:5.1.47'
-
     
     // 本地调试时，改变代码后自动热部署
     //developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     // 密码加密保存
-    //implementation 'org.apache.shiro:shiro-core:1.4.0'
+    implementation 'org.apache.shiro:shiro-core:1.4.1'
     // JWT token
-    //implementation 'com.nimbusds:nimbus-jose-jwt:7.1'
+    implementation 'com.nimbusds:nimbus-jose-jwt:7.1'
     // 利用StringUtils
     implementation 'org.apache.commons:commons-lang3:3.9'
 
-    // springboot mvc 集成 swagger 開始 
+    // springboot mvc 集成 swagger 开始
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     // springboot mvc 集成 swagger 结束
     
+    // 读取word文档 开始
     implementation 'org.apache.poi:poi-ooxml:4.1.0'
     implementation 'org.apache.poi:poi-scratchpad:4.1.0'
+    // 读取word文档 结束
 }

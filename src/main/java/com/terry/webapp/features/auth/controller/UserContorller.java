@@ -2,7 +2,6 @@ package com.terry.webapp.features.auth.controller;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,12 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.terry.webapp.common.exception.AppException;
@@ -34,11 +29,11 @@ import com.terry.webapp.common.response.BaseResponse;
 import com.terry.webapp.features.auth.bean.LoginRequest;
 import com.terry.webapp.features.auth.bean.LoginResponse;
 import com.terry.webapp.features.auth.bean.RefreshTokenRequest;
-import com.terry.webapp.features.auth.db.UserRolesRepository;
-import com.terry.webapp.security.JwtTokenProvider;
 import com.terry.webapp.features.auth.db.User;
 import com.terry.webapp.features.auth.db.UserRepository;
 import com.terry.webapp.features.auth.db.UserRoles;
+import com.terry.webapp.features.auth.db.UserRolesRepository;
+import com.terry.webapp.security.AppSecurityConfig;
 import com.terry.webapp.util.SimpleSaltHash;
 import com.terry.webapp.util.token.Token;
 import com.terry.webapp.util.token.TokenManager;
@@ -48,12 +43,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@Api(value = "UserContorller", produces = "application/json")
+@Api(value = "UserContorller", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserContorller {
     private static final Logger logger = LoggerFactory.getLogger(UserContorller.class);
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -64,6 +56,9 @@ public class UserContorller {
     @Autowired
     private TokenManager tokenManager;
 
+    @Autowired
+    private AppSecurityConfig appSecurityConfig;
+    
     /**
      * 输入数据=用户名+密码 ---> 验证用户名+密码 ---> 生成accessToken和refreshToken ---> 返回
      * http://localhost:8809/api/v1/user/login
@@ -85,8 +80,8 @@ public class UserContorller {
             // 密码匹配
             if (SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt).equals(psw)) { 
                 // token 的有效时间可以配置
-                Instant expiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds(), ChronoUnit.MILLIS);
-                Instant refreshTokenExpiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds()*2, ChronoUnit.MILLIS);
+                Instant expiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
+                Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
                 String token = tokenManager.generateToken(request.getUsername(), Date.from(expiredTime));
                 String refreshToken = tokenManager.generateToken(request.getUsername(), Date.from(refreshTokenExpiredTime));
                 List<UserRoles>  roleList = userRolesRepository.findByUsername(request.getUsername());
@@ -133,8 +128,8 @@ public class UserContorller {
             }
             String userId = decodedToken.getUserId();
             // token 的有效时间可以配置
-            Instant expiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds(), ChronoUnit.MILLIS);
-            Instant refreshTokenExpiredTime = Instant.now().plus(jwtTokenProvider.getTokenValidityInMilliseconds()*2, ChronoUnit.MILLIS);
+            Instant expiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
+            Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
             String token = tokenManager.generateToken(userId, Date.from(expiredTime));
             String refreshToken = tokenManager.generateToken(userId, Date.from(refreshTokenExpiredTime));
             List<UserRoles>  roleList = userRolesRepository.findByUsername(userId);

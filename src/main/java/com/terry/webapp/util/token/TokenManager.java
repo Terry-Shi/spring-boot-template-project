@@ -27,7 +27,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.terry.webapp.common.exception.AppException;
 
 /**
- *
+ * 所有nimbusds相关的api能在此类中调用，隔绝jwt的工具类选型带来的影响
  */
 @Component
 public class TokenManager {
