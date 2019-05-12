@@ -15,13 +15,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class Role {
 
-//	@Id
-//    @GeneratedValue
-//    private Long id;
+	@Id
+    @GeneratedValue
+    private Long id;
 
-    @Id
+    @Column(nullable = false, unique = true)
     private String role; // ROLE_ADMIN, ROLE_PERSON, ROLE_COMPANY 
     
+    @Column
     private String desc;
   
     @Column(nullable = false,  columnDefinition = "Timestamp DEFAULT CURRENT_TIMESTAMP")
@@ -29,13 +30,13 @@ public class Role {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
-//	public Long getId() {
-//		return id;
-//	}
-//
-//	public void setId(Long id) {
-//		this.id = id;
-//	}
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getRole() {
 		return role;

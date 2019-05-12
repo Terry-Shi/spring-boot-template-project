@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 
@@ -22,13 +23,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class User {
 
-	private static final long serialVersionUID = 4882722066708750581L;
-
-//	@Id
-//    @GeneratedValue
-//    private String userId;
-	
 	@Id
+    @GeneratedValue
+    private String userId;
+	
     @NotEmpty(message = "用户名不能为空")
     @Column(nullable = false, unique=true)
     private String username;
@@ -67,13 +65,13 @@ public class User {
 		this.roleList = roleList;
 	}
 
-//	public String getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
+	public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUsername() {
         return username;

@@ -68,7 +68,7 @@ public class UserContorller {
     @PostMapping(value="login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Login.", notes ="user login API" , response = LoginResponse.class)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-         User user  = userRepository.findByUserId(request.getUsername());
+         User user  = userRepository.findByUsername(request.getUsername());
         if (user == null) {
         	// user不存在
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
@@ -135,17 +135,19 @@ public class UserContorller {
             List<UserRoles>  roleList = userRolesRepository.findByUsername(userId);
             String sysRoles = "";
             if (roleList != null && roleList.size()>0) {
-                for (UserRoles userRoles : roleList) {
-                    sysRoles = sysRoles + "," + userRoles.getRole();
-                }
-                sysRoles = sysRoles.substring(1);
+//                for (UserRoles userRoles : roleList) {
+//                    sysRoles = sysRoles + "," + userRoles.getRole();
+//                }
+//                sysRoles = sysRoles.substring(1);
+            	List<String> roles = roleList.stream().map(role -> role.getRole()).collect(Collectors.toList());
+            	sysRoles = String.join(",", roles);
             }
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
                     .refreshToken(refreshToken).userId(userId).sysRoles(sysRoles).build();            
 			return new ResponseEntity<>(loginResponse, HttpStatus.OK);
         } else {
-            logger.info("refresh token failed, refreshtoken is not valid.");
-            throw new AppException("refresh token failed, refreshtoken is not valid.");
+            logger.info("refresh token failed, refreshtoken is not valid, token is:" + decodedToken);
+            throw new AppException("refresh token failed, refreshtoken is not valid, token is:" + decodedToken);
         }
     }
     
@@ -183,7 +185,7 @@ public class UserContorller {
     @ApiOperation(value = "update user info.", notes ="update user info" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> update(@Valid @RequestBody User request) {
         try {
-            User users = userRepository.findByUserId(request.getUsername());
+            User users = userRepository.findByUsername(request.getUsername());
             if (users != null) {
                 if (!StringUtils.isBlank(request.getPassword())) {
                     request.setPassword(SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt));

@@ -26,15 +26,16 @@ public class UserRoles {
     protected long id;
 
     @Column(nullable = false)
-    protected String username;
+    protected String userId;
 
     @Column(nullable = false)
-    protected String role;
+    protected String roleId;
 
     @Column(nullable = false,  columnDefinition = "Timestamp DEFAULT CURRENT_TIMESTAMP")
     @Generated(GenerationTime.INSERT)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     protected Timestamp createTime;
+    
     
     public long getId() {
         return id;
@@ -44,20 +45,20 @@ public class UserRoles {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleId() {
+        return roleId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(String roleId) {
+        this.roleId = roleId;
     }
 
     public Timestamp getCreateTime() {

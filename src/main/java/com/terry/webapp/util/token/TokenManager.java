@@ -27,15 +27,16 @@ import com.nimbusds.jwt.SignedJWT;
 import com.terry.webapp.common.exception.AppException;
 
 /**
- * 所有nimbusds相关的api能在此类中调用，隔绝jwt的工具类选型带来的影响
+ * JWT 生成和解析类
+ * 所有nimbusds相关的api只能在此类中调用，隔绝jwt的工具类选型带来的影响
  */
 @Component
 public class TokenManager {
     private static final Logger logger = LoggerFactory.getLogger(TokenManager.class);
-    public static final String USER_ID = "uid";
+    public static final String USER_ID = "uid"; // 用户ID
     public static final String WRAPPED_TOKEN = "wtk";
 
-    public static final String ISSUER = "gateway";
+    public static final String ISSUER = "gateway"; // 本token由哪个服务发布
     private static final String algorithm = "RSA"; // HMAC|RSA
     private byte[] sharedSecret; // only for MACSigner
 
@@ -63,12 +64,16 @@ public class TokenManager {
         } else {
             return new MACVerifier(sharedSecret);
         }
-
     }
 
+    /**
+     * 解析token字符串
+     * @param jwtToken
+     * @return Token对象
+     */
     public Token decodeToken(String jwtToken) {
         if (jwtToken == null) {
-            return null;
+        	throw new AppException("failed to verify token since token is null.");
         }
         Token token = new Token();
         try {
@@ -83,10 +88,14 @@ public class TokenManager {
             }
         } catch (ParseException | JOSEException e) {
             logger.error("Failed to verify token: {}", jwtToken, e);
+            throw new AppException("failed to verify token:" + jwtToken, e);
         }
         return token;
     }
 
+    /*
+     * 从HTTP header中截取token字符串
+     */
     public String extractToken(String header) {
         if (header == null) {
             return null;
@@ -94,6 +103,12 @@ public class TokenManager {
         return header.length() > "Bearer ".length() ? header.substring("Bearer ".length()) : null;
     }
 
+    /**
+     * 生成token字符串
+     * @param userId 用户ID
+     * @param expiredDate token什么时间过期
+     * @return token字符串
+     */
     public String generateToken(String userId, Date expiredDate) {
         try {
             // Prepare JWT with claims set
@@ -111,11 +126,15 @@ public class TokenManager {
             // eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
             return signedJWT.serialize();
         } catch (JOSEException e) {
-            logger.error("failed to generateToken for user: {}", userId, e);
-            throw new AppException("failed to generateToken for user: " + userId);
+            logger.error("failed to generate Token for user: {}", userId, e);
+            throw new AppException("failed to generate Token for user: " + userId);
         }
     }
-
+    
+    /**
+     * 创建签名对象
+     * @return
+     */
     private JWSSigner createSigner() {
         if ("RSA".equals(algorithm)) {
             return createRSASignerFromFile();
@@ -129,7 +148,7 @@ public class TokenManager {
             return new MACSigner(sharedSecret);
         } catch (KeyLengthException e) {
             logger.error("failed to createHMACSigner", e);
-            throw new AppException("failed to createHMACSigner.");
+            throw new AppException("failed to create HMACSigner.");
         }
     }
 
