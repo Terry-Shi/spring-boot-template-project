@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Generated;
@@ -25,7 +27,7 @@ public class User {
 
 	@Id
     @GeneratedValue
-    private String userId;
+    private String id;
 	
     @NotEmpty(message = "用户名不能为空")
     @Column(nullable = false, unique=true)
@@ -44,33 +46,34 @@ public class User {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
     
-//	private String roles;
-//	
-//    public String getRoles() {
-//		return roles;
+	@OneToMany(targetEntity = UserRoles.class, mappedBy = "id", orphanRemoval = false, fetch = FetchType.LAZY)
+	private List<UserRoles> roles;
+	
+    public List<UserRoles> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<UserRoles> roles) {
+		this.roles = roles;
+	}
+
+//	// 不是表字段
+//	private List<String> roleList;
+//    
+//    public List<String> getRoleList() {
+//		return roleList;
 //	}
 //
-//	public void setRoles(String roles) {
-//		this.roles = roles;
+//	public void setRoleList(List<String> roleList) {
+//		this.roleList = roleList;
 //	}
 
-	// 不是表字段
-	private List<String> roleList;
-    
-    public List<String> getRoleList() {
-		return roleList;
-	}
-
-	public void setRoleList(List<String> roleList) {
-		this.roleList = roleList;
-	}
-
-	public String getUserId() {
-        return userId;
+	public String getId() {
+        return id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {

@@ -91,7 +91,7 @@ public class UserContorller {
 //                        sysRoles = sysRoles + "," + userRoles.getRole();
 //                    }
 //                    sysRoles = sysRoles.substring(1);
-                    List<String> roles = roleList.stream().map(role -> role.getRole()).collect(Collectors.toList());
+                    List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
                     sysRoles = String.join(",",  roles);
                 }
                 LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
@@ -139,7 +139,7 @@ public class UserContorller {
 //                    sysRoles = sysRoles + "," + userRoles.getRole();
 //                }
 //                sysRoles = sysRoles.substring(1);
-            	List<String> roles = roleList.stream().map(role -> role.getRole()).collect(Collectors.toList());
+            	List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
             	sysRoles = String.join(",", roles);
             }
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
