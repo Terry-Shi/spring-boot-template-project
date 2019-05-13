@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.terry.webapp.common.DetectiveContext;
 import com.terry.webapp.config.AppProperties;
-import com.terry.webapp.util.token.Token;
+import com.terry.webapp.security.token.Token;
 
 import java.io.IOException;
 

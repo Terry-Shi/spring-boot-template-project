@@ -1,4 +1,4 @@
-package com.terry.webapp.util.token;
+package com.terry.webapp.security.token;
 
 import java.security.SecureRandom;
 import java.text.ParseException;

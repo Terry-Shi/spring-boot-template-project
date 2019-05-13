@@ -1,4 +1,4 @@
-package com.terry.webapp.util;
+package com.terry.webapp.security;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;

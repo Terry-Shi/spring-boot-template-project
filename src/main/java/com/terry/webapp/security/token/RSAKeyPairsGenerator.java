@@ -1,4 +1,4 @@
-package com.terry.webapp.util.token;
+package com.terry.webapp.security.token;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;
