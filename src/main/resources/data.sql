@@ -4,7 +4,7 @@
 INSERT INTO user (username, password, displayname, create_time)
 SELECT 'admin', '83cfb7f0dda5f0efc09d0d90bf80c025', '默认管理员', CURRENT_TIMESTAMP() 
 From dual 
-WHERE NOT EXISTS (Select 1 From user WHERE user_id = 'admin') limit 1;
+WHERE NOT EXISTS (Select 1 From user WHERE username = 'admin') limit 1;
 
 -- User_roles
 INSERT INTO user_roles (`user_id`, `role_id`, create_time)

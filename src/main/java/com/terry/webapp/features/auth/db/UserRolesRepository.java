@@ -27,8 +27,8 @@ public interface UserRolesRepository extends JpaRepository<UserRoles, Long> {
     public void deleteByUserIdAndRoleId(String username, String role);
     
     @Query(value = "select new com.terry.webapp.features.auth.bean.RoleBean(r1.role as role,r1.description as description) "
-    		       + " from UserRoles as u1 left join Role as r1 on u1.id = r1.roleId "
-    		       + " where u1.id = :userId")
+    		       + " from UserRoles as u1 left join Role as r1 on u1.id = r1.role_Id "
+    		       + " where u1.id = :userId", nativeQuery = true)
     List<RoleBean> findRoleByUserId(@Param("userId")Long userId);
     
 //    @Query(value = "select e.id, e.user_id, e.role, e.gateway_policy_id, d.service_name, d.http_method, d.url "
