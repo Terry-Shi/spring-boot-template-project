@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.terry.webapp.features.auth.bean.RoleBean;
 
 
 /**
@@ -14,14 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface UserRolesRepository extends JpaRepository<UserRoles, Long> {
 
-    public List<UserRoles> findByUsername(String username);
+	@Query(value = "")
+    public List<UserRoles> findByUserId(String username);
 
     @Transactional
-    public void deleteByUsername(String username);
+    public void deleteByUserId(String username);
    
     @Transactional
-    public void deleteByUsernameAndRole(String username, String role);
+    public void deleteByUserIdAndRoleId(String username, String role);
     
+    @Query(value = "select new com.terry.webapp.features.auth.bean.RoleBean(r1.role as role,r1.description as description) "
+    		       + " from UserRoles as u1 left join Role as r1 on u1.id = r1.roleId "
+    		       + " where u1.id = :userId")
+    List<RoleBean> findRoleByUserId(@Param("userId")Long userId);
     
 //    @Query(value = "select e.id, e.user_id, e.role, e.gateway_policy_id, d.service_name, d.http_method, d.url "
 //        + " from user_roles e "

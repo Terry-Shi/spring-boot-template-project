@@ -5,7 +5,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Generated;
@@ -22,13 +26,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class User {
 
-	private static final long serialVersionUID = 4882722066708750581L;
-
-//	@Id
-//    @GeneratedValue
-//    private String userId;
-	
 	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+	
     @NotEmpty(message = "用户名不能为空")
     @Column(nullable = false, unique=true)
     private String username;
@@ -46,34 +47,35 @@ public class User {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
     
-//	private String roles;
-//	
-//    public String getRoles() {
-//		return roles;
-//	}
-//
-//	public void setRoles(String roles) {
-//		this.roles = roles;
-//	}
-
-	// 不是表字段
-	private List<String> roleList;
-    
-    public List<String> getRoleList() {
-		return roleList;
+	@OneToMany(targetEntity = UserRoles.class, mappedBy = "user", orphanRemoval = false, fetch = FetchType.LAZY)
+	private List<UserRoles> roles;
+	
+    public List<UserRoles> getRoles() {
+		return roles;
 	}
 
-	public void setRoleList(List<String> roleList) {
-		this.roleList = roleList;
+	public void setRoles(List<UserRoles> roles) {
+		this.roles = roles;
 	}
 
-//	public String getUserId() {
-//        return userId;
-//    }
+//	// 不是表字段
+//	private List<String> roleList;
+//    
+//    public List<String> getRoleList() {
+//		return roleList;
+//	}
 //
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
+//	public void setRoleList(List<String> roleList) {
+//		this.roleList = roleList;
+//	}
+
+	public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -106,36 +108,4 @@ public class User {
 	public void setDisplayname(String displayname) {
 		this.displayname = displayname;
 	}
-
-//    @ElementCollection
-//	@Override
-//	public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//    	if (roleList != null) {
-//    		for (String role : roleList) {
-//                authorities.add( new SimpleGrantedAuthority( role ) );
-//    		}
-//    	}
-//		return authorities;
-//	}
-//
-//	@Override
-//	public boolean isAccountNonExpired() {
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isAccountNonLocked() {
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isCredentialsNonExpired() {
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isEnabled() {
-//		return true;
-//	}
 }

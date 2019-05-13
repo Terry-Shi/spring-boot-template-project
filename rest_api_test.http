@@ -7,9 +7,9 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
 
 {
-    "userId": "",
-    "userName": "",
-    "password": ""
+    "username": "user01",
+    "displayname": "Tom",
+    "password": "password01"
 }
 
 ### update一个用户
@@ -18,14 +18,15 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
 
 {
-    "userId": "user001",
-    "userName": "用户001-new name",
+    "id": "1",
+    "username": "user01",
+    "displayname": "Tom-new",
     "password": "psw001-new",
     "createTime": "2018-11-28 09:25:42"
 }
 
 ### 删除一个用户
-DELETE http://localhost:8809/api/v1/users/user004
+DELETE http://localhost:8809/api/v1/users/1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3YXkiLCJleHAiOjE4NTg2Njk0MTl9.bkkUjRY1l--tJS0HiXRdeENdtTmMXGb_BqqESRtrefFcxujO24PWM570pdspxIkAykamkq8lDKnufO-_Bhx-oKs265Z9F5VEs0IfTjXJxpQQWQLS0qvWBEgJ7O0cnpcLodHVzZrswt2r3t26D0P7PLoEIYiEo6A8lQTjit69-MG_u7auGbBJNMvpmlQvyFjrZV7GeEiI5ZMS7wxJ3pwTEKyJaEHsKDu7iGuD2D28V1Sk0UnZkM9K5pO6mw4KIensYpNw2kyY7YCUz47lV2iUENb8I6Qhea5iWAHqoXsOhHRR43nyDQgY9Ll2sN7VIputGUmChaFK79TC9pfoETVQKw
 
@@ -36,13 +37,13 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3Y
 
 #返回值例子
 [{
-  "userId": "admin",
-  "userName": "默认管理员",
+  "username": "admin",
+  "displayname": "默认管理员",
   "password": "83cfb7f0dda5f0efc09d0d90bf80c025",
   "createTime": "2018-11-27 09:33:13"
 }, {
-  "userId": "user001",
-  "userName": "用户001-new name",
+  "username": "user001",
+  "displayname": "用户001-new name",
   "password": "8df102cf3de8bbbe489b6752417d0b6d",
   "createTime": "2018-11-28 09:25:42"
 }]
@@ -54,13 +55,13 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsImlzcyI6ImdhdGV3Y
 #返回值例子
 [{
   "userId": "admin",
-  "userName": "默认管理员",
+  "username": "默认管理员",
   "password": "83cfb7f0dda5f0efc09d0d90bf80c025",
   "createTime": "2018-11-27 09:33:13",
   "sysRoles": "SYS_ADMIN,GUEST"
 }, {
   "userId": "user001",
-  "userName": "用户001-new name",
+  "username": "用户001-new name",
   "password": "8df102cf3de8bbbe489b6752417d0b6d",
   "createTime": "2018-11-28 09:25:42",
   "sysRoles": ""

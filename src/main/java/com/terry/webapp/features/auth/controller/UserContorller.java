@@ -2,6 +2,7 @@ package com.terry.webapp.features.auth.controller;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,14 +30,18 @@ import com.terry.webapp.common.response.BaseResponse;
 import com.terry.webapp.features.auth.bean.LoginRequest;
 import com.terry.webapp.features.auth.bean.LoginResponse;
 import com.terry.webapp.features.auth.bean.RefreshTokenRequest;
+import com.terry.webapp.features.auth.bean.RoleBean;
+import com.terry.webapp.features.auth.bean.UserWithRoles;
+import com.terry.webapp.features.auth.db.Role;
+import com.terry.webapp.features.auth.db.RoleRepository;
 import com.terry.webapp.features.auth.db.User;
 import com.terry.webapp.features.auth.db.UserRepository;
 import com.terry.webapp.features.auth.db.UserRoles;
 import com.terry.webapp.features.auth.db.UserRolesRepository;
 import com.terry.webapp.security.AppSecurityConfig;
-import com.terry.webapp.util.SimpleSaltHash;
-import com.terry.webapp.util.token.Token;
-import com.terry.webapp.util.token.TokenManager;
+import com.terry.webapp.security.SimpleSaltHash;
+import com.terry.webapp.security.token.Token;
+import com.terry.webapp.security.token.TokenManager;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +59,9 @@ public class UserContorller {
     private UserRolesRepository userRolesRepository;
     
     @Autowired
+    private RoleRepository roleRepository;
+    
+    @Autowired
     private TokenManager tokenManager;
 
     @Autowired
@@ -68,7 +76,7 @@ public class UserContorller {
     @PostMapping(value="login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Login.", notes ="user login API" , response = LoginResponse.class)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-         User user  = userRepository.findByUserId(request.getUsername());
+         User user  = userRepository.findByUsername(request.getUsername());
         if (user == null) {
         	// user不存在
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
@@ -84,14 +92,14 @@ public class UserContorller {
                 Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
                 String token = tokenManager.generateToken(request.getUsername(), Date.from(expiredTime));
                 String refreshToken = tokenManager.generateToken(request.getUsername(), Date.from(refreshTokenExpiredTime));
-                List<UserRoles>  roleList = userRolesRepository.findByUsername(request.getUsername());
+                List<UserRoles>  roleList = userRolesRepository.findByUserId(request.getUsername());
                 String sysRoles = "";
                 if (roleList != null && roleList.size()>0) {
 //                    for (UserRoles userRoles : roleList) {
 //                        sysRoles = sysRoles + "," + userRoles.getRole();
 //                    }
 //                    sysRoles = sysRoles.substring(1);
-                    List<String> roles = roleList.stream().map(role -> role.getRole()).collect(Collectors.toList());
+                    List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
                     sysRoles = String.join(",",  roles);
                 }
                 LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
@@ -132,20 +140,22 @@ public class UserContorller {
             Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
             String token = tokenManager.generateToken(userId, Date.from(expiredTime));
             String refreshToken = tokenManager.generateToken(userId, Date.from(refreshTokenExpiredTime));
-            List<UserRoles>  roleList = userRolesRepository.findByUsername(userId);
+            List<UserRoles>  roleList = userRolesRepository.findByUserId(userId);
             String sysRoles = "";
             if (roleList != null && roleList.size()>0) {
-                for (UserRoles userRoles : roleList) {
-                    sysRoles = sysRoles + "," + userRoles.getRole();
-                }
-                sysRoles = sysRoles.substring(1);
+//                for (UserRoles userRoles : roleList) {
+//                    sysRoles = sysRoles + "," + userRoles.getRole();
+//                }
+//                sysRoles = sysRoles.substring(1);
+            	List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
+            	sysRoles = String.join(",", roles);
             }
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
                     .refreshToken(refreshToken).userId(userId).sysRoles(sysRoles).build();            
 			return new ResponseEntity<>(loginResponse, HttpStatus.OK);
         } else {
-            logger.info("refresh token failed, refreshtoken is not valid.");
-            throw new AppException("refresh token failed, refreshtoken is not valid.");
+            logger.info("refresh token failed, refreshtoken is not valid, token is:" + decodedToken);
+            throw new AppException("refresh token failed, refreshtoken is not valid, token is:" + decodedToken);
         }
     }
     
@@ -180,10 +190,10 @@ public class UserContorller {
      * @return
      */
     @PutMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "update user info.", notes ="update user info" , response = BaseResponse.class)
+    @ApiOperation(value = "update user password.", notes ="update user password" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> update(@Valid @RequestBody User request) {
         try {
-            User users = userRepository.findByUserId(request.getUsername());
+            User users = userRepository.findByUsername(request.getUsername());
             if (users != null) {
                 if (!StringUtils.isBlank(request.getPassword())) {
                     request.setPassword(SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt));
@@ -208,11 +218,11 @@ public class UserContorller {
      * @param userId
      * @return
      */
-    @DeleteMapping(value="/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "delete user info.", notes ="delete user info" , response = BaseResponse.class)
-    public ResponseEntity<BaseResponse> delete(@PathVariable("userId") String userId) {
+    public ResponseEntity<BaseResponse> delete(@PathVariable("id") Long id) {
         try {
-            userRepository.deleteById(userId);
+            userRepository.deleteById(id);
             BaseResponse response = new BaseResponse(200, "user deleted");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -225,11 +235,19 @@ public class UserContorller {
      * @return
      */
     @GetMapping(value="/list", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "query user list.", notes ="query user list" , response = List.class)
-    public ResponseEntity<List<User>> list() {
+    @ApiOperation(value = "query user list with roles.", notes ="query user list with roles." , response = List.class)
+    public ResponseEntity<List<UserWithRoles>> list() {
+    	List<UserWithRoles> list = new ArrayList<UserWithRoles>();
         try {
+        	UserWithRoles userWithRoles = new UserWithRoles();
             List<User> users = userRepository.findAll();
-            return new ResponseEntity<>(users, HttpStatus.OK);
+            for (User user: users) {
+                List<RoleBean> roleBean = userRolesRepository.findRoleByUserId(user.getId());
+                userWithRoles.setUsername(user.getUsername());
+                userWithRoles.setDisplayname(user.getDisplayname());
+                userWithRoles.setRoleBean(roleBean);
+            }
+            return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (Exception e) {
             throw new AppException("list user failed: " + e.getMessage());
         }

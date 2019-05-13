@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.Generated;
@@ -15,27 +16,28 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class Role {
 
-//	@Id
-//    @GeneratedValue
-//    private Long id;
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @Id
+    @Column(nullable = false, unique = true)
     private String role; // ROLE_ADMIN, ROLE_PERSON, ROLE_COMPANY 
     
-    private String desc;
+    @Column
+    private String description;
   
     @Column(nullable = false,  columnDefinition = "Timestamp DEFAULT CURRENT_TIMESTAMP")
     @Generated(GenerationTime.INSERT)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
-//	public Long getId() {
-//		return id;
-//	}
-//
-//	public void setId(Long id) {
-//		this.id = id;
-//	}
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getRole() {
 		return role;
@@ -45,12 +47,12 @@ public class Role {
 		this.role = role;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Timestamp getCreateTime() {
@@ -60,6 +62,5 @@ public class Role {
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
-    
     
 }
