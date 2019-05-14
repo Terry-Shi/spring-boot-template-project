@@ -24,9 +24,9 @@ import com.terry.webapp.common.exception.AppException;
 @Component
 public class TokenManager {
     private static final Logger logger = LoggerFactory.getLogger(TokenManager.class);
+    
     public static final String USER_NAME = "uid";
     public static final String WRAPPED_TOKEN = "wtk";
-
     public static final String ISSUER = "gateway";
     // TODO: 
     private static final ALGORITHM algorithm = ALGORITHM.RSA; // HMAC|RSA

@@ -3,8 +3,9 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/myapp?useUnicode=yes&characterEncoding=UTF-8&useSSL=true&verifyServerCertificate=false&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:root}
-    initSQL: "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;"
     driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      connection-init-sql: "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;"
   jpa:
     show-sql: ${SHOW_SQL:false}
     database-platform: org.hibernate.dialect.MySQL57Dialect #spring boot2中不加这句则默认为myisam引擎，参考类注释
