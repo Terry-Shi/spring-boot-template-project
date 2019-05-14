@@ -71,7 +71,7 @@ public class UserContorller {
      * 输入数据=用户名+密码 ---> 验证用户名+密码 ---> 生成accessToken和refreshToken ---> 返回
      * http://localhost:8809/api/v1/user/login
      * @param request
-     * @return
+     * @return LoginResponse
      */
     @PostMapping(value="login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Login.", notes ="user login API" , response = LoginResponse.class)
@@ -80,39 +80,29 @@ public class UserContorller {
         if (user == null) {
         	// user不存在
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
-            return new ResponseEntity<>(
-            		loginResponse, 
-            	      HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(loginResponse, HttpStatus.UNAUTHORIZED);
         } else {
             String psw = user.getPassword();
-            // 密码匹配
+            // 检查密码是否匹配
             if (SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt).equals(psw)) { 
                 // token 的有效时间可以配置
-                Instant expiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
+                Instant accessTokenExpiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
                 Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
-                String token = tokenManager.generateToken(request.getUsername(), Date.from(expiredTime));
+                String token = tokenManager.generateToken(request.getUsername(), Date.from(accessTokenExpiredTime));
                 String refreshToken = tokenManager.generateToken(request.getUsername(), Date.from(refreshTokenExpiredTime));
-                List<UserRoles>  roleList = userRolesRepository.findByUserId(request.getUsername());
+                List<RoleBean>  roleList = userRolesRepository.findRoleByUsername(request.getUsername());
                 String sysRoles = "";
                 if (roleList != null && roleList.size()>0) {
-//                    for (UserRoles userRoles : roleList) {
-//                        sysRoles = sysRoles + "," + userRoles.getRole();
-//                    }
-//                    sysRoles = sysRoles.substring(1);
-                    List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
+                    List<String> roles = roleList.stream().map(role -> role.getRoleName()).collect(Collectors.toList());
                     sysRoles = String.join(",",  roles);
                 }
                 LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
-                        .refreshToken(refreshToken).userId(request.getUsername()).sysRoles(sysRoles).build();
-                return new ResponseEntity<>(
-                		loginResponse, 
-                	      HttpStatus.OK);
+                        .refreshToken(refreshToken).userId(request.getUsername()).roles(sysRoles).build();
+				return new ResponseEntity<>(loginResponse, HttpStatus.OK);
             } else {
                 // 密码错误
                 LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
-                return new ResponseEntity<>(
-                		loginResponse, 
-                	      HttpStatus.UNAUTHORIZED);
+				return new ResponseEntity<>(loginResponse, HttpStatus.UNAUTHORIZED);
             }
         }
     }
@@ -134,24 +124,20 @@ public class UserContorller {
                 logger.info("refresh token failed, The refreshToken is expired: " + decodedToken.getExpirationTime());
                 throw new AppException("refresh token failed, refreshtoken is expired.");
             }
-            String userId = decodedToken.getUserId();
+            String username = decodedToken.getUsername();
             // token 的有效时间可以配置
-            Instant expiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
+            Instant accessTokenExpiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
             Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
-            String token = tokenManager.generateToken(userId, Date.from(expiredTime));
-            String refreshToken = tokenManager.generateToken(userId, Date.from(refreshTokenExpiredTime));
-            List<UserRoles>  roleList = userRolesRepository.findByUserId(userId);
+            String token = tokenManager.generateToken(username, Date.from(accessTokenExpiredTime));
+            String refreshToken = tokenManager.generateToken(username, Date.from(refreshTokenExpiredTime));
+            List<RoleBean>  roleList = userRolesRepository.findRoleByUsername(username);
             String sysRoles = "";
             if (roleList != null && roleList.size()>0) {
-//                for (UserRoles userRoles : roleList) {
-//                    sysRoles = sysRoles + "," + userRoles.getRole();
-//                }
-//                sysRoles = sysRoles.substring(1);
-            	List<String> roles = roleList.stream().map(role -> role.getRole().getRole()).collect(Collectors.toList());
+                List<String> roles = roleList.stream().map(role -> role.getRoleName()).collect(Collectors.toList());
             	sysRoles = String.join(",", roles);
             }
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(200).token(token)
-                    .refreshToken(refreshToken).userId(userId).sysRoles(sysRoles).build();            
+                    .refreshToken(refreshToken).userId(username).roles(sysRoles).build();            
 			return new ResponseEntity<>(loginResponse, HttpStatus.OK);
         } else {
             logger.info("refresh token failed, refreshtoken is not valid, token is:" + decodedToken);
@@ -161,60 +147,51 @@ public class UserContorller {
     
     /**
      * create a user
+     * 输入User--->检查是否已经存在同名用户---> 密码加密---> 保存新用户
      * @param request
      * @return
      */
     @PostMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "create new user.", notes ="create new user" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> add(@Valid @RequestBody User user) {
-        try {
-            User users = userRepository.findByUsername(user.getUsername());
-            if (users == null) {
-            	user.setPassword(SimpleSaltHash.getMd5Hash(user.getPassword(), SimpleSaltHash.salt));
-                userRepository.save(user);
-            } else {
-                throw new AppException("User already exists!");
-            }
-            BaseResponse response = new BaseResponse(200, "user created");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (AppException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new AppException("create new user failed: " + e.getMessage(), e);
+        User users = userRepository.findByUsername(user.getUsername());
+        if (users == null) {
+        	user.setPassword(SimpleSaltHash.getMd5Hash(user.getPassword(), SimpleSaltHash.salt));
+            userRepository.save(user);
+        } else {
+            throw new AppException("User already exists!");
         }
+        BaseResponse response = new BaseResponse(200, "user created");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     /**
-     * update a user
+     * update a user (更改密码)
+     * TODO: 是否要提供旧密码比对？
      * @param request
      * @return
      */
     @PutMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "update user password.", notes ="update user password" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> update(@Valid @RequestBody User request) {
-        try {
-            User users = userRepository.findByUsername(request.getUsername());
-            if (users != null) {
-                if (!StringUtils.isBlank(request.getPassword())) {
-                    request.setPassword(SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt));
-                } else {
-                    request.setPassword(users.getPassword());
-                }
-                userRepository.save(request);
+        User users = userRepository.findByUsername(request.getUsername());
+        if (users != null) {
+            if (!StringUtils.isBlank(request.getPassword())) {
+                request.setPassword(SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt));
             } else {
-                throw new AppException("User not exists!");
+                request.setPassword(users.getPassword());
             }
-            BaseResponse response = new BaseResponse(200, "user updated");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (AppException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new AppException("update user failed: " + e.getMessage(), e);
+            userRepository.save(request);
+        } else {
+            throw new AppException("User not exists!");
         }
+        BaseResponse response = new BaseResponse(200, "user updated");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     /**
      * delete a user by userId
+     * TODO: 联动删除UserRole表的数据？
      * @param userId
      * @return
      */
@@ -239,13 +216,15 @@ public class UserContorller {
     public ResponseEntity<List<UserWithRoles>> list() {
     	List<UserWithRoles> list = new ArrayList<UserWithRoles>();
         try {
-        	UserWithRoles userWithRoles = new UserWithRoles();
             List<User> users = userRepository.findAll();
             for (User user: users) {
+            	UserWithRoles userWithRoles = new UserWithRoles();
                 List<RoleBean> roleBean = userRolesRepository.findRoleByUserId(user.getId());
+                userWithRoles.setId(user.getId());
                 userWithRoles.setUsername(user.getUsername());
                 userWithRoles.setDisplayname(user.getDisplayname());
-                userWithRoles.setRoleBean(roleBean);
+                userWithRoles.setRoles(roleBean);
+                list.add(userWithRoles);
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (Exception e) {
@@ -253,34 +232,4 @@ public class UserContorller {
         }
     }
 
-//    /**
-//     * list all the users with SYS role
-//     * @return
-//     */
-//    @Path("/list-with-sysroles")
-//    @GET
-//    @Consumes(MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public List<UserWithSysRoles> listWithSysRoles() {
-//        try {
-//            List<UserWithSysRoles> ret = new ArrayList<UserWithSysRoles>();
-//            List<User> users = userRepository.findAll();
-//            for (User user : users) {
-//                List<UserRoles> userRoles = userRolesRepository.findByUserIdAndServiceName(user.getUserId(), "SYS");
-//                UserWithSysRoles userWithSysRoles = new UserWithSysRoles();
-//                userWithSysRoles.from(user);
-//                String oneUserSysRoles = "";
-//                for (UserRoles roles : userRoles) {
-//                    oneUserSysRoles = oneUserSysRoles + "," +roles.getRole();
-//                }
-//                if (!oneUserSysRoles.equals("")) {
-//                    oneUserSysRoles = oneUserSysRoles.substring(1);
-//                }
-//                userWithSysRoles.setSysRoles(oneUserSysRoles);
-//                ret.add(userWithSysRoles);
-//            }
-//            return ret;
-//        } catch (Exception e) {
-//            throw new AppException("list user failed: " + e.getMessage());
-//        }
-//    }
 }

@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class User {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
     @NotEmpty(message = "用户名不能为空")
@@ -46,28 +46,6 @@ public class User {
     @Generated(GenerationTime.INSERT)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
-    
-	@OneToMany(targetEntity = UserRoles.class, mappedBy = "user", orphanRemoval = false, fetch = FetchType.LAZY)
-	private List<UserRoles> roles;
-	
-    public List<UserRoles> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<UserRoles> roles) {
-		this.roles = roles;
-	}
-
-//	// 不是表字段
-//	private List<String> roleList;
-//    
-//    public List<String> getRoleList() {
-//		return roleList;
-//	}
-//
-//	public void setRoleList(List<String> roleList) {
-//		this.roleList = roleList;
-//	}
 
 	public Long getId() {
         return id;

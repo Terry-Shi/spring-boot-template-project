@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class UserRoles {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
 //
 //    @Column(nullable = false)

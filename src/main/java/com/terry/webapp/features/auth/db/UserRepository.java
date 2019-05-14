@@ -25,6 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     		+"  left join UserRoles as ur1 on u1.id = ur1.user_Id "
     		+ "where u1.username = :username ",
             countQuery = "select count(uil.id) from User as uil where uil.username = :username ", nativeQuery = true)
-    Page<UserWithRoles> findElitedByInviteUserId(@Param("username")String username, Pageable pageable);
+    Page<UserWithRoles> queryUserByUsername(@Param("username")String username, Pageable pageable);
 
 }

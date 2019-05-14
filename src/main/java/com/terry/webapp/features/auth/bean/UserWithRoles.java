@@ -6,17 +6,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.terry.webapp.features.auth.db.User;
 
 
-@JsonIgnoreProperties(value = { "roles", "password" })
+@JsonIgnoreProperties(value = { "createTime", "roles", "password" })
 public class UserWithRoles extends User{
 	
-	private List<RoleBean> roleBean;
+	private List<RoleBean> roles;
 
-	public List<RoleBean> getRoleBean() {
-		return roleBean;
+	public List<RoleBean> getRoles() {
+		return roles;
 	}
 
-	public void setRoleBean(List<RoleBean> roleBean) {
-		this.roleBean = roleBean;
+	public void setRoles(List<RoleBean> roles) {
+		this.roles = roles;
 	}
 	
 }

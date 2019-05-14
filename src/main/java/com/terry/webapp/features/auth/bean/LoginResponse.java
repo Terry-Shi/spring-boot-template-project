@@ -13,14 +13,14 @@ public class LoginResponse extends BaseResponse {
     private String token;
     private String refreshToken;
     private String userId;
-    private String sysRoles; // SYS_ADMIN,GUEST,......
+    private String roles; // 逗号分隔的角色 SYS_ADMIN,GUEST,......
 
     private LoginResponse(Builder builder) {
         super(builder.statusCode, builder.message);
         this.token = builder.token;
         this.refreshToken = builder.refreshToken;
         this.userId = builder.userId;
-        this.sysRoles = builder.sysRoles;
+        this.roles = builder.roles;
     }
 
     public String getToken() {
@@ -36,7 +36,7 @@ public class LoginResponse extends BaseResponse {
     }
 
     public String getSysRoles() {
-        return sysRoles;
+        return roles;
     }
 
     public static class Builder {
@@ -48,7 +48,7 @@ public class LoginResponse extends BaseResponse {
         private String refreshToken;
         private String message;
         private String userId;
-        private String sysRoles;
+        private String roles;
 
         public Builder statusCode(int statusCode) {
             this.statusCode = statusCode == 201 ? 200 : statusCode;
@@ -75,8 +75,8 @@ public class LoginResponse extends BaseResponse {
             return this;
         }
         
-        public Builder sysRoles(String sysRoles) {
-            this.sysRoles = sysRoles;
+        public Builder roles(String roles) {
+            this.roles = roles;
             return this;
         }
         
