@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author 
  */
-public class DetectiveContext {
+public class AppContext {
     private static ThreadLocal<ConcurrentHashMap<String, String>> threadLocal = ThreadLocal.withInitial(ConcurrentHashMap::new);
 
     public static String getUserId() {

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.terry.webapp.common.DetectiveContext;
+import com.terry.webapp.common.AppContext;
 import com.terry.webapp.config.AppProperties;
 import com.terry.webapp.security.token.Token;
 
@@ -72,13 +72,13 @@ public class AuthenticationFilter implements Filter {
 //        String bearerToken = req.getHeader(AuthxConstant.AUTHORIZATION);
 //        Token token = this.authxManagement.decodeBearerToken(bearerToken);
 //        TokenUtil.verifyToken(token);
-//        DetectiveContext.setLevel(token.getLevel());
-//        DetectiveContext.setName(token.getName());
-//        DetectiveContext.setRole(token.getRole());
-//        DetectiveContext.setUserId(token.getUserId());
-//        DetectiveContext.setOrganization(token.getOrganization());
-//        DetectiveContext.setOrganizationCode(token.getOrganizationCode());
-//        DetectiveContext.setStatus(token.getStatus());
+//        AppContext.setLevel(token.getLevel());
+//        AppContext.setName(token.getName());
+//        AppContext.setRole(token.getRole());
+//        AppContext.setUserId(token.getUserId());
+//        AppContext.setOrganization(token.getOrganization());
+//        AppContext.setOrganizationCode(token.getOrganizationCode());
+//        AppContext.setStatus(token.getStatus());
     }
 
 	@Override
