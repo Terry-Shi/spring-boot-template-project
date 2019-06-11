@@ -8,7 +8,7 @@ spring:
       connection-init-sql: "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;"
   jpa:
     show-sql: ${SHOW_SQL:false}
-    database-platform: org.hibernate.dialect.MySQL57Dialect #spring boot2中不加这句则默认为myisam引擎，参考类注释
+    database-platform: com.terry.webapp.util.MySQL57InnoDBDialectUtf8mb4 #org.hibernate.dialect.MySQL57Dialect #spring boot2中不加这句则默认为myisam引擎，参考类注释
     hibernate:
       ddl-auto: update
 #      type: trace
