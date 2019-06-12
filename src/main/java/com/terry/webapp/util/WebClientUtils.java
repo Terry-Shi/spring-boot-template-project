@@ -2,21 +2,29 @@ package com.terry.webapp.util;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
 
-public class WebClientUtils {
+@Service
+class WebClientUtils {
+
+    private final WebClient webClient;
 
 	public static void main(String arg[]) {
-		//WebClient client1 = WebClient.create();
-		//WebClientUtils.testWithCookie();
-		
-		WebClientUtils.testPostJson();
+		WebClient.Builder webClientBuilder = WebClient.builder();
+		WebClientUtils webClientUtils = new WebClientUtils(webClientBuilder);
+		//webClientUtils.testWithCookie();
+		webClientUtils.testPostJson();
 	}
 	
-	public static void testWithCookie(){
-        Mono<String> resp = WebClient.create()
+    public WebClientUtils(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
+	
+	public void testWithCookie(){
+        Mono<String> resp = this.webClient
                 .method(HttpMethod.GET)
                 .uri("https://httpbin.org/cookies")
                 .cookie("token","xxxx")
@@ -26,18 +34,26 @@ public class WebClientUtils {
         System.out.println("result:{}" + resp.block());
     }
 	
-	public static void testPostJson(){
+	public void testPostJson(){
         Book book = new Book();
         book.setName("name");
         book.setTitle("this is title");
-        Mono<String> resp = WebClient.create().post()
+        Mono<String> resp = webClient.post()
                 .uri("https://httpbin.org/anything")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .body(Mono.just(book),Book.class)
+                .body(Mono.just(book), Book.class)
                 .retrieve().bodyToMono(String.class);
         System.out.println("result:{}" + resp.block());
     }
-
+	
+//	public <T> void post(T input) {
+//		Mono<String> resp = webClient.post()
+//                .uri("https://httpbin.org/anything")
+//                .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                .body(Mono.just(input), input.getClass())
+//                .retrieve().bodyToMono(String.class);
+//        System.out.println("result:{}" + resp.block());
+//	}
 }
 
 class Book {
