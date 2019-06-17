@@ -113,6 +113,8 @@ dependencies {
     implementation 'com.nimbusds:nimbus-jose-jwt:7.1'
     // 利用StringUtils
     implementation 'org.apache.commons:commons-lang3:3.9'
+    // suport retry for webClient
+    implementation 'io.projectreactor.addons:reactor-extra:3.2.3.RELEASE'
 
     // springboot mvc 集成 swagger 开始
     implementation 'io.springfox:springfox-swagger2:2.9.2'
