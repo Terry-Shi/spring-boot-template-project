@@ -32,4 +32,4 @@ logging:
         SQL: DEBUG  # 显示SQL
   #file: /var/log/myapp.log
   pattern:
-    console: '%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{requestId}] %logger{15} - %msg%n'  
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{requestId}] %logger{15} - %msg%n'  

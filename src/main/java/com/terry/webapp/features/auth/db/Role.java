@@ -62,5 +62,12 @@ public class Role {
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
-    
+
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", role=" + role + ", description=" + description + ", createTime=" + createTime
+				+ "]";
+	}
+ 
+	
 }
