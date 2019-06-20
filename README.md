@@ -1,6 +1,6 @@
-## Spring boot 1.5.x 模版工程
+## Spring boot 2.x 模版工程
 - 编程语言 Java 8 
-- 整体框架 [Spring Boot 1.5.x 的最新版](https://projects.spring.io/spring-boot/)
+- 整体框架 [Spring Boot 2.x 的最新版](https://projects.spring.io/spring-boot/)
 - 选择spring mvc作为Restful API实现
 - 关系型数据库访问层：Spring Data JPA
   
@@ -80,5 +80,4 @@ gradle build -x test
 
 ### 参考资料
 - [Spring Boot官方文档](https://www.gitbook.com/book/qbgbook/spring-boot-reference-guide-zh/details)
-- [JPA 关联查询](https://www.jianshu.com/p/cc4e199cbb14)
 
