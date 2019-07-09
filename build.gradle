@@ -1,29 +1,11 @@
-// buildscript {
-//     ext {
-//         springBootVersion = '2.1.4.RELEASE'
-//     }
-//     repositories {
-//         mavenCentral()
-//     }
-//     dependencies {
-//         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-//         //classpath("se.transmode.gradle:gradle-docker:1.2")
-//         //classpath("com.github.jnr:jnr-ffi:2.1.1") // required by docker gradle plugin
-//     }
-// }
-
 plugins {
-	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'io.spring.dependency-management'
     id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'jacoco'
 }
-//apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-//apply plugin: 'docker'
-//apply plugin: 'org.springframework.boot'
-apply plugin: 'jacoco'
-apply plugin: 'io.spring.dependency-management'
-
 
 jar {
     baseName = 'spring-boot-template-project'
