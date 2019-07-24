@@ -8,7 +8,7 @@ spring:
       connection-init-sql: "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;"
   jpa:
     show-sql: ${SHOW_SQL:false}
-    database-platform: com.terry.webapp.util.MySQL57InnoDBDialectUtf8mb4 #org.hibernate.dialect.MySQL57Dialect #spring boot2中不加这句则默认为myisam引擎，参考类注释
+    database-platform: com.service.webapp.util.MySQL57InnoDBDialectUtf8mb4 #org.hibernate.dialect.MySQL57Dialect #spring boot2中不加这句则默认为myisam引擎，参考类注释
     hibernate:
       ddl-auto: update
 #      type: trace
@@ -41,4 +41,4 @@ logging:
         SQL: DEBUG  # 显示SQL
   #file: /var/log/myapp.log
   pattern:
-    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{requestId}] %logger{15} - %msg%n'  
+    webapp: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{requestId}] %logger{15} - %msg%n'  
