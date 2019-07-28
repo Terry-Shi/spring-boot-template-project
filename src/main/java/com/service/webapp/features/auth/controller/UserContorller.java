@@ -57,9 +57,6 @@ public class UserContorller {
     private UserRolesRepository userRolesRepository;
     
     @Autowired
-    private RoleRepository roleRepository;
-    
-    @Autowired
     private TokenManager tokenManager;
 
     @Autowired
@@ -68,21 +65,22 @@ public class UserContorller {
     /**
      * 输入数据=用户名+密码 ---> 验证用户名+密码 ---> 生成accessToken和refreshToken ---> 返回
      * http://localhost:8809/api/v1/user/login
-     * @param request
+     * @param request LoginRequest
      * @return LoginResponse
      */
     @PostMapping(value="login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Login.", notes ="user login API" , response = LoginResponse.class)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-         User user  = userRepository.findByUsername(request.getUsername());
+        User user  = userRepository.findByUsername(request.getUsername());
         if (user == null) {
         	// user不存在
             LoginResponse loginResponse = new LoginResponse.Builder().statusCode(401).token("").refreshToken("").build();
 			return new ResponseEntity<>(loginResponse, HttpStatus.UNAUTHORIZED);
         } else {
+        	// 检查密码是否匹配
             String psw = user.getPassword();
-            // 检查密码是否匹配
             if (SimpleSaltHash.getMd5Hash(request.getPassword(), SimpleSaltHash.salt).equals(psw)) { 
+            	// 生成Token
                 // token 的有效时间可以配置
                 Instant accessTokenExpiredTime = Instant.now().plus(appSecurityConfig.getTokenExpiredSeconds(), ChronoUnit.SECONDS);
                 Instant refreshTokenExpiredTime = Instant.now().plus(appSecurityConfig.getRefreshTokenExpiredSeconds(), ChronoUnit.SECONDS);
@@ -151,7 +149,7 @@ public class UserContorller {
      */
     @PostMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "create new user.", notes ="create new user" , response = BaseResponse.class)
-    public ResponseEntity<BaseResponse> add(@Valid @RequestBody User user) {
+    public ResponseEntity<BaseResponse> addUser(@Valid @RequestBody User user) {
         User users = userRepository.findByUsername(user.getUsername());
         if (users == null) {
         	user.setPassword(SimpleSaltHash.getMd5Hash(user.getPassword(), SimpleSaltHash.salt));
@@ -189,7 +187,7 @@ public class UserContorller {
     
     /**
      * delete a user by userId
-     * TODO: 联动删除UserRole表的数据？
+     * 联动删除UserRole表的数据
      * @param userId
      * @return
      */
@@ -198,6 +196,7 @@ public class UserContorller {
     public ResponseEntity<BaseResponse> delete(@PathVariable("id") Long id) {
         try {
             userRepository.deleteById(id);
+            userRolesRepository.deleteByUserId(id);
             BaseResponse response = new BaseResponse(200, "user deleted");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -217,7 +216,7 @@ public class UserContorller {
             List<User> users = userRepository.findAll();
             for (User user: users) {
             	UserWithRoles userWithRoles = new UserWithRoles();
-                List<RoleBean> roleBean = userRolesRepository.findRoleByUserId(user.getId());
+                List<RoleBean> roleBean = userRolesRepository.findByUserId(user.getId());
                 userWithRoles.setId(user.getId());
                 userWithRoles.setUsername(user.getUsername());
                 userWithRoles.setDisplayname(user.getDisplayname());

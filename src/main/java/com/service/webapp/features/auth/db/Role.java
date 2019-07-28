@@ -16,13 +16,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class Role {
 
+	// 自增ID，无业务含义
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	// 权限名称
     @Column(nullable = false, unique = true)
-    private String role; // ROLE_ADMIN, ROLE_PERSON, ROLE_COMPANY 
+    private String role; // ADMIN, DEVELOPER, 。。。 
     
+    // 权限描述
     @Column
     private String description;
   
@@ -68,6 +71,4 @@ public class Role {
 		return "Role [id=" + id + ", role=" + role + ", description=" + description + ", createTime=" + createTime
 				+ "]";
 	}
- 
-	
 }

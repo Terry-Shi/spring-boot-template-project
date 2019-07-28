@@ -127,9 +127,9 @@ public class RoleController {
     
     @GetMapping(value="/list-by-userid/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "query role list with given userId.", notes ="query role list with given userId" , response = UserRoles.class)
-    public ResponseEntity<List<UserRoles>> listWithUsername(@PathVariable("userId")Long userId) {
+    public ResponseEntity<List<UserRoles>> listWithUsername(@PathVariable("")Long userId) {
         try {
-            List<UserRoles> roles = userRolesRepository.findByUserId(userId);
+            List<UserRoles> roles = userRolesRepository.findByUsername(userId);
             return new ResponseEntity<>(roles, HttpStatus.OK);
         } catch (Exception e) {
             throw new AppException("list role with given userId failed: " + e.getMessage());

@@ -17,25 +17,24 @@ import com.service.webapp.features.auth.bean.RoleBean;
  */
 public interface UserRolesRepository extends JpaRepository<UserRoles, Long> {
 
-    public List<UserRoles> findByUserId(Long userid);
+    public List<UserRoles> findByUserId(Long userId);
 
     @Transactional
-    public void deleteByUserId(Long userid);
+    public void deleteByUserId(Long userId);
    
     @Transactional
-    public void deleteByUserIdAndRoleId(Long userid, Long roleid);
+    public void deleteByUserIdAndRoleId(Long userId, Long roleId);
     
-    // NativeQuery 返回记录映射到自定义POJO
-    //role_name 或者 roleName都能被正确转换成结果集的对象
-    @Query(value = "select r1.id as id, r1.role as role_name,r1.description as description "
-    		       + " from User_Roles as u1 left join Role as r1 on u1.role_id = r1.Id "
-    		       + " where u1.user_id = :userId", nativeQuery = true)
-    List<RoleBean> findRoleByUserId(@Param("userId")Long userId);
+    // NativeQuery 返回记录映射到自定义interface
+//    @Query(value = "select r1.id as id, r1.role as role_name, r1.description as description "
+//    		       + " from User_Roles as u1 left join Role as r1 on u1.role_id = r1.Id "
+//    		       + " where u1.user_id = :username", nativeQuery = true)
+//    List<RoleBean> findRoleByUserId(@Param("username")String username);
     
     @Query(value = "select r1.id as id, r1.role as role_name,r1.description as description "
 		       + " from User_Roles as u1  "
     		   + " join user as user1 on u1.user_id = user1.id "
     		   + " left join Role as r1 on u1.role_id = r1.Id "
-		       + " where user.username = :username", nativeQuery = true)
+		       + " where user1.username = :username", nativeQuery = true)
     List<RoleBean> findRoleByUsername(@Param("username")String username);
 }

@@ -26,10 +26,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 public class User {
 
+	// 自增ID，无业务含义
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	// 登录用的用户名
     @NotEmpty(message = "用户名不能为空")
     @Column(nullable = false, unique=true)
     private String username;
