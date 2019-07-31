@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.service.webapp.common.exception.AppException;
 import com.service.webapp.common.response.BaseResponse;
+import com.service.webapp.features.auth.bean.RoleBean;
 import com.service.webapp.features.auth.db.Role;
 import com.service.webapp.features.auth.db.RoleRepository;
 import com.service.webapp.features.auth.db.UserRoles;
@@ -125,11 +126,11 @@ public class RoleController {
         }
     }
     
-    @GetMapping(value="/list-by-userid/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value="/list-by-userid/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "query role list with given userId.", notes ="query role list with given userId" , response = UserRoles.class)
-    public ResponseEntity<List<UserRoles>> listWithUsername(@PathVariable("")Long userId) {
+    public ResponseEntity<List<RoleBean>> listWithUsername(@PathVariable("username")String username) {
         try {
-            List<UserRoles> roles = userRolesRepository.findByUsername(userId);
+        	List<RoleBean> roles = userRolesRepository.findRoleByUsername(username);
             return new ResponseEntity<>(roles, HttpStatus.OK);
         } catch (Exception e) {
             throw new AppException("list role with given userId failed: " + e.getMessage());

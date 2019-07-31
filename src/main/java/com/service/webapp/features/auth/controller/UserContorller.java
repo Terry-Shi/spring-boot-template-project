@@ -216,7 +216,7 @@ public class UserContorller {
             List<User> users = userRepository.findAll();
             for (User user: users) {
             	UserWithRoles userWithRoles = new UserWithRoles();
-                List<RoleBean> roleBean = userRolesRepository.findByUserId(user.getId());
+                List<RoleBean> roleBean = userRolesRepository.findRoleByUsername(user.getUsername());
                 userWithRoles.setId(user.getId());
                 userWithRoles.setUsername(user.getUsername());
                 userWithRoles.setDisplayname(user.getDisplayname());
