@@ -17,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.service.webapp.common.exception.AppException;
 import com.service.webapp.common.response.BaseResponse;
 import com.service.webapp.features.auth.bean.RoleBean;
 import com.service.webapp.features.auth.db.Role;
-import com.service.webapp.features.auth.db.RoleRepository;
 import com.service.webapp.features.auth.db.UserRoles;
-import com.service.webapp.features.auth.db.UserRolesRepository;
+import com.service.webapp.features.auth.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,12 +31,8 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "RoleController", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class RoleController {
 
-	
 	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
-	private UserRolesRepository userRolesRepository;
+	private RoleService roleService;
 	
 	/**
      * create a role
@@ -47,13 +41,8 @@ public class RoleController {
      */
     @PostMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "create new role.", notes ="create new role" , response = BaseResponse.class)
-    public ResponseEntity<BaseResponse> add(@Valid @RequestBody Role role) {
-        Role roles = roleRepository.findByRole(role.getRole());
-        if (roles == null) {
-            roleRepository.save(role);
-        } else {
-            throw new AppException("Role already exists!");
-        }
+    public ResponseEntity<BaseResponse> createRole(@Valid @RequestBody Role role) {
+        roleService.createRole(role);
         BaseResponse response = new BaseResponse(200, "role created");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -65,33 +54,10 @@ public class RoleController {
      */
     @PutMapping(value="/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "update role info.", notes ="update role info" , response = BaseResponse.class)
-    public ResponseEntity<BaseResponse> update(@Valid @RequestBody Role request) {
-        Role oldRole = roleRepository.findByRole(request.getRole());
-        if (oldRole != null) {
-        	oldRole.setDescription(request.getDescription());
-            roleRepository.save(oldRole);
-        } else {
-            throw new AppException("Role is not exists!");
-        }
+    public ResponseEntity<BaseResponse> updateRole(@Valid @RequestBody Role request) {
+        roleService.updateRole(request);
         BaseResponse response = new BaseResponse(200, "role updated");
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    /**
-     * delete a role by roleId
-     * @param roleId
-     * @return
-     */
-    @DeleteMapping(value="/{roleId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "delete role info.", notes ="delete role info" , response = BaseResponse.class)
-    public ResponseEntity<BaseResponse> delete(@PathVariable("roleId") String roleId) {
-        try {
-            roleRepository.deleteById(roleId);
-            BaseResponse response = new BaseResponse(200, "role deleted");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new AppException("delete role failed: " + e.getMessage());
-        }
     }
     
     /**
@@ -102,13 +68,9 @@ public class RoleController {
     @DeleteMapping(value="/byname/{roleName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "delete role info.", notes ="delete role info" , response = BaseResponse.class)
     public ResponseEntity<BaseResponse> deleteByName(@PathVariable("roleName") String roleName) {
-        try {
-            roleRepository.deleteByRole(roleName);
-            BaseResponse response = new BaseResponse(200, "role deleted");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new AppException("delete role failed: " + e.getMessage());
-        }
+    	roleService.deleteByRole(roleName);
+        BaseResponse response = new BaseResponse(200, "role deleted");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -118,22 +80,14 @@ public class RoleController {
     @GetMapping(value="/list", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "query role list.", notes ="query role list" , response = Role.class)
     public ResponseEntity<List<Role>> list() {
-        try {
-            List<Role> roles = roleRepository.findAll();
-            return new ResponseEntity<>(roles, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new AppException("list role failed: " + e.getMessage());
-        }
+        List<Role> roles = roleService.list();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
     }
     
     @GetMapping(value="/list-by-userid/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "query role list with given userId.", notes ="query role list with given userId" , response = UserRoles.class)
     public ResponseEntity<List<RoleBean>> listWithUsername(@PathVariable("username")String username) {
-        try {
-        	List<RoleBean> roles = userRolesRepository.findRoleByUsername(username);
-            return new ResponseEntity<>(roles, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new AppException("list role with given userId failed: " + e.getMessage());
-        }
+    	List<RoleBean> roles = roleService.listWithUsername(username);
+        return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 }

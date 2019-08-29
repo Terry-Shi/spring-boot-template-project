@@ -20,9 +20,16 @@ public class AppExceptionHandler {
 	    return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	@ExceptionHandler({ RestapiException.class })
+	@ResponseBody
+	public ResponseEntity<BaseResponse> handleAppException(RestapiException e) {
+        BaseResponse response = new BaseResponse(e.getStatusCode(), e.getMessage());
+	    return new ResponseEntity<>(response, HttpStatus.resolve(e.getStatusCode()));
+	}
+	
 	/**
 	 * 数据校验失败
-	 * @param e
+	 * @param e MethodArgumentNotValidException
 	 * @return
 	 */
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
